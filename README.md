@@ -16,3 +16,9 @@ docker compose up -d --build
 ```
 ### Edit Lore Contents
 Place the relevant `.md` files in the directory `lore_contents`, and run `rebuild.py` to rebuild the `.db` file.
+
+### Refresh
+Run
+``` bash
+uvicorn main:app --reload --port 5000  
+```
