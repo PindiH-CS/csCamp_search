@@ -7,3 +7,5 @@ __pycache__/
 
 searxng/
 lore_contents/
+
+custom_search.log

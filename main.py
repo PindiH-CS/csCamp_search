@@ -2,19 +2,19 @@ import os
 import subprocess
 import sqlite3
 import httpx
+import requests
 import random
-from contextlib import asynccontextmanager  # <-- Fix 1: Added this missing import
-
+from contextlib import asynccontextmanager
+from datetime import datetime
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import specs
 
-# --- 1. Environment Variables ---
+
 SEARXNG_URL = os.getenv("SEARXNG_URL", "http://localhost:8080/search")
 IS_DOCKER = os.getenv("SEARXNG_URL") is not None
 
-# --- 2. Startup Logic ---
 def start_searxng(searxng_dir: str = "./searxng"):
     """Spins up the SearXNG docker container in the background."""
     if not os.path.isdir(searxng_dir):
@@ -43,19 +43,16 @@ def start_searxng(searxng_dir: str = "./searxng"):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if not IS_DOCKER:
-        start_searxng(searxng_dir="./searxng")  # Ensure this path matches your local setup
+        start_searxng(searxng_dir="./searxng")
     yield
     print("Shutting down FastAPI server...")
 
 
-# --- 3. App Initialization ---
-# Fix 2: Attach the lifespan to the app when you create it!
+# App initialization
 app = FastAPI(lifespan=lifespan)
 templates = Jinja2Templates(directory="templates")
 
 
-# --- 4. Routes ---
-# Homepage Formatting
 @app.get("/", response_class=HTMLResponse)
 async def serve_homepage(request: Request):
     return templates.TemplateResponse(
@@ -73,7 +70,23 @@ async def serve_results_page(request: Request, q: str):
     )
     
 @app.get("/api/search")
-async def search(q: str):
+async def search(request: Request, q: str):
+    try:
+        with open("custom_search.log", "a", encoding="utf-8") as log_file:
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            forwarded = request.headers.get("x-forwarded-for")
+            if forwarded:
+                client_ip = forwarded.split(",")[0]
+            elif request.client and request.client.host:
+                client_ip = request.client.host
+            else:
+                client_ip = "unknown_ip"
+
+            log_file.write(f"[{timestamp}] IP: {client_ip} | QUERY: {q}\n")
+    except Exception as e:
+        print(f"Failed to write log: {e}")
+        
     results = []
     
     # Custom Lore Results
@@ -101,7 +114,7 @@ async def search(q: str):
     # Real Web searching with SearXNG
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(SEARXNG_URL, params={"q": q, "format": "json"})
+            response = await client.get(SEARXNG_URL, params={"q": q, "format": "json", "safesearch": "2"})
             if response.status_code == 200:
                 searxng_data = response.json()
                 for item in searxng_data.get("results", []):
