@@ -106,7 +106,7 @@ async def search(q: str):
 
     return {"query": q, "results": results}
 
-if __name__ == "__main__":
+def start():
     import uvicorn
     start_searxng()
     uvicorn.run(app, host="0.0.0.0", port=5000)
