@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  larp-search:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./larp_lore.db:/app/larp_lore.db
+    environment:
+      - SEARXNG_URL=http://searxng:8080/search
+    depends_on:
+      searxng:
+        condition: service_healthy # <-- Tells FastAPI to WAIT until SearXNG is ready
+
+  searxng:
+    image: searxng/searxng:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./searxng:/etc/searxng
+    restart: unless-stopped
+    healthcheck: # <-- Constantly checks if SearXNG is actually awake
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

@@ -1,5 +1,6 @@
 # Random position (max index)
-rand_range = 6
+rand_max = 6
+rand_min = 2
 
 # Lore Page Directory
 lore_dirname = "lore_contents"

@@ -1,0 +1,9 @@
+# Web Framework
+fastapi>=0.100.0
+uvicorn>=0.23.0
+
+# Async HTTP Client (For SearXNG)
+httpx>=0.24.1
+
+# Templating Engine (For HTML)
+jinja2>=3.1.2
