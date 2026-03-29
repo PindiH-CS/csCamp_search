@@ -2,164 +2,182 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ q }} - AEGIS Search</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>DELPHI // {{ q }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: #050508;
-            color: #b0b0b0;
-            font-family: 'Rajdhani', sans-serif;
-            margin: 0;
-            padding: 0;
+        :root {
+            --bg: #0c0c0e;
+            --accent: #5ef3ff;
+            --lore-accent: #ff3e60;
+            --text-dim: #949499;
+            --border: #1e1e21;
         }
 
-        /* Top Navigation Bar */
+        body {
+            background-color: var(--bg);
+            color: #e2e2e4;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            line-height: 1.6;
+        }
+
         .top-bar {
-            background: #0a0a0f;
-            border-bottom: 1px solid #1a1a24;
-            padding: 20px 40px;
+            background: rgba(12, 12, 14, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 40px;
             display: flex;
             align-items: center;
-            gap: 40px;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
         .logo-small {
-            font-size: 2em;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: #ffffff;
+            color: #fff;
             text-decoration: none;
-            text-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
-            letter-spacing: 2px;
+            margin-right: 40px;
         }
 
         input[type="text"] {
-            width: 500px;
-            background: rgba(20, 20, 25, 0.8);
-            color: #00e5ff;
-            border: 1px solid #333;
-            padding: 12px 20px;
-            font-size: 1.2em;
-            font-family: 'Rajdhani', sans-serif;
-            border-radius: 20px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        input[type="text"]:focus {
-            border-color: #00e5ff;
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
-        }
-
-        /* Results Container */
-        .results-container {
-            max-width: 800px;
-            margin: 40px 40px 40px 150px; /* Offset to mimic Google's alignment */
-        }
-
-        .loading { color: #00e5ff; font-size: 1.2em; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-
-        /* Individual Result Cards */
-        .result-card {
-            background: #0a0a0f;
-            border: 1px solid #1a1a24;
+            width: 450px;
+            background: #161618;
+            color: var(--accent);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            font-size: 0.95rem;
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            outline: none;
         }
 
-        .result-card:hover {
-            border-color: #333;
-            transform: translateX(5px);
+        .results-container {
+            max-width: 1100px; 
+            width: 95%;
+
+            margin-left: clamp(20px, 8vw, 120px);
+            margin-right: 20px;
+            padding: 20px 0;
+            box-sizing: border-box;
         }
 
-        .url-text {
-            font-size: 0.9em;
-            color: #666;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        @media (max-width: 768px) {
+            .results-container {
+                margin-left: 15px;
+                width: calc(100% - 30px);
+            }
+            
+            .top-bar {
+                padding: 15px 20px;
+            }
+
+            input[type="text"] {
+                width: 100%;
+            }
+        }
+
+        .status-bar {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .result-card {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
         }
 
         .tag {
-            font-size: 0.75em;
-            padding: 2px 6px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.65rem;
+            padding: 2px 8px;
             border-radius: 4px;
-            letter-spacing: 1px;
+            text-transform: uppercase;
             font-weight: 600;
+            margin-right: 10px;
         }
 
-        .tag-public { background: #1a1a24; color: #888; border: 1px solid #333; }
-        .tag-secure { background: rgba(255, 0, 60, 0.1); color: #ff003c; border: 1px solid #ff003c; box-shadow: 0 0 5px rgba(255, 0, 60, 0.3); }
+        .tag-public { color: var(--text-dim); border: 1px solid #333; }
+        .tag-secure { color: var(--lore-accent); border: 1px solid var(--lore-accent); }
+
+        .url-text {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+        }
 
         .title-link {
-            font-size: 1.4em;
-            font-weight: 600;
-            color: #00e5ff;
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #fff;
             text-decoration: none;
-            display: block;
-            margin-bottom: 8px;
+            display: inline-block;
+            margin-bottom: 6px;
         }
         
-        .title-link:hover { text-decoration: underline; }
+        .title-link:hover { color: var(--accent); }
         
-        /* Specialized Styling for Lore Results */
-        .lore-result { border-left: 3px solid #ff003c; }
-        .lore-result .title-link { color: #ff003c; }
+        /* Lore Styling: Subtle and Clean */
+        .lore-result .title-link:hover { color: var(--lore-accent); }
 
         .content-snippet {
-            font-size: 1.1em;
-            line-height: 1.5;
-            color: #a0a0a0;
+            font-size: 0.95rem;
+            color: var(--text-dim);
             margin: 0;
         }
+
+        /* Error messages */
+        .error-msg { font-family: 'Rajdhani', sans-serif; color: var(--lore-accent); }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <a href="/" class="logo-small">AEGIS</a>
+        <a href="/" class="logo-small">DELPHI</a>
         <form action="/search" method="GET">
             <input type="text" name="q" value="{{ q }}" autocomplete="off">
         </form>
     </div>
 
-    <div class="results-container" id="resultsArea">
-        <div class="loading">ESTABLISHING UPLINK... SCANNING NETWORKS...</div>
+    <div class="results-container">
+        <div id="status" class="status-bar">CONNECTING TO NODE... SECURING DATA STREAM...</div>
+        <div id="resultsArea"></div>
     </div>
 
     <script>
-        // The Jinja2 template injects the query string safely into the JS
         const userQuery = "{{ q }}";
 
         async function loadResults() {
             const resultsArea = document.getElementById('resultsArea');
+            const status = document.getElementById('status');
             try {
-                // Fetch from your Python backend
                 const response = await fetch(`/api/search?q=${encodeURIComponent(userQuery)}`);
                 const data = await response.json();
                 
+                status.innerText = `FETCHED ${data.results.length} RECORD(S) IN 0.0034s`;
                 resultsArea.innerHTML = ""; 
                 
                 if (data.results.length === 0) {
-                    resultsArea.innerHTML = "<h3 style='color:#ff003c;'>[ERR] NO RECORDS FOUND MATCHING QUERY.</h3>";
+                    resultsArea.innerHTML = `<h3 class="error-msg">[NULL] NO MATCHING RECORDS IN DATABASE.</h3>`;
                     return;
                 }
 
-                // Render each card
                 data.results.forEach(item => {
                     const isLore = item.source === 'lore';
-                    const cardClass = isLore ? 'result-card lore-result' : 'result-card';
-                    const tagHtml = isLore ? '<span class="tag tag-secure">SECURE NODE</span>' : '<span class="tag tag-public">PUBLIC WEB</span>';
+                    const tagHtml = isLore ? 
+                        `<span class="tag tag-secure">Classified</span>` : 
+                        `<span class="tag tag-public">Public</span>`;
                     
                     resultsArea.innerHTML += `
-                        <div class="${cardClass}">
+                        <div class="result-card ${isLore ? 'lore-result' : ''}">
                             <div class="url-text">${tagHtml} ${item.url}</div>
                             <a href="${item.url}" target="_blank" class="title-link">${item.title}</a>
                             <p class="content-snippet">${item.content}</p>
@@ -167,11 +185,11 @@
                     `;
                 });
             } catch (err) {
-                resultsArea.innerHTML = `<h3 style="color:#ff003c;">[CRITICAL ERROR] NETWORK CONNECTION SEVERED.</h3>`;
+                status.innerText = "CONNECTION FAILURE";
+                resultsArea.innerHTML = `<h3 class="error-msg">[CRITICAL] NODE OFFLINE.</h3>`;
             }
         }
         
-        // Execute the search as soon as the DOM loads
         document.addEventListener('DOMContentLoaded', loadResults);
     </script>
 </body>

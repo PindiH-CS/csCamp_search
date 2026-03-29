@@ -1,11 +1,8 @@
-# Python virtual environments and cache
 venv/
 __pycache__/
 *.pyc
 
-# Databases (Don't push your lore DB if it has real data, better to build it on the server)
 *.db
 *.sqlite3
 
-# Docker and SearXNG volumes
 searxng/
