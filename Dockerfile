@@ -14,6 +14,6 @@ COPY . .
 # Expose the port FastAPI runs on
 EXPOSE 5000
 
-RUN python rebuild.py
+# RUN python rebuild.py
 # Start Uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
