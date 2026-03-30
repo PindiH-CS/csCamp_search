@@ -10,7 +10,10 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import specs
+import os
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_FILE = os.path.join(BASE_DIR, "custom_search.log")
 
 SEARXNG_URL = os.getenv("SEARXNG_URL", "http://localhost:8080/search")
 IS_DOCKER = os.getenv("SEARXNG_URL") is not None
@@ -72,7 +75,7 @@ async def serve_results_page(request: Request, q: str):
 @app.get("/api/search")
 async def search(request: Request, q: str):
     try:
-        with open("custom_search.log", "a", encoding="utf-8") as log_file:
+        with open(LOG_FILE, "a", encoding="utf-8") as log_file:
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             
             forwarded = request.headers.get("x-forwarded-for")
