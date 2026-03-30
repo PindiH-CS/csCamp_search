@@ -14,6 +14,7 @@ clone this directory, then run
 ``` bash
 docker compose up -d --build
 ```
+**Hint:** You might have to make sure **Docker** is running on your personal machine
 ### Edit Lore Contents
 Place the relevant `.md` files in the directory `lore_contents`, and run `rebuild.py` to rebuild the `.db` file.
 
